@@ -60,9 +60,11 @@ func StartDb() {
 
 	_, err = db.Exec("CREATE TABLE IF NOT EXISTS user_role " +
 		"(id INT AUTO_INCREMENT PRIMARY KEY," +
-		"userId INT," +
-		"role INT)")
+		"user_id INT," +
+		"role VARCHAR(50))")
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	CheckUser()
 }
