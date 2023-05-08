@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+<h1>Вход</h1>
+{{if .Message}}
+<p>{{.Message}}</p>
+{{end}}
+<form method="POST" action="/">
+    <label for="login">Логин:</label>
+    <input type="text" id="login" name="login"><br>
+    <label for="password">Пароль:</label>
+    <input type="password" id="password" name="password"><br>
+    <input type="submit" value="Войти">
+</form>
+</body>
+</html>

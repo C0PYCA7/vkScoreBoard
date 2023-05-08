@@ -66,5 +66,5 @@ func StartDb() {
 		log.Fatal(err)
 	}
 
-	CheckUser()
+	Check()
 }

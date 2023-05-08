@@ -4,5 +4,5 @@ import "vkScoreBoard/website"
 
 func main() {
 	website.StartDb()
-	//website.CheckUser()
+	website.StartServer()
 }

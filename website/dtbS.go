@@ -2,14 +2,23 @@ package website
 
 import "log"
 
-func CheckUser() {
-	var count int
-	err := db.QueryRow("SELECT COUNT(*) FROM users").Scan(&count)
+var Count int
+
+func FindUser(login string, password string) {
+	query := "SELECT COUNT(*) FROM users WHERE username = ? AND password = ?"
+	err := db.QueryRow(query, login, password).Scan(&Count)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func Check() {
+	err := db.QueryRow("SELECT COUNT(*) FROM users").Scan(&Count)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if count == 0 {
+	if Count == 0 {
 
 		query := "INSERT INTO categories (category_name, count_of_tasks) " +
 			"VALUES (?, ?)"
