@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ScoreBoard</title>
+</head>
+<body>
+<header> Здравствуйте, {{range .ViewAll}}{{.User}}{{end}}</header>
+<h1>Ваш рейтинг по решению задач:</h1>
+<table>
+    <caption>Рейтинг среди сотрудников</caption>
+    <thead>
+    <tr>
+        <th>Категория задач</th>
+        <th>Ваш рейтинг</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{range .ViewAll}}
+    {{range .RatingByEmployee}}
+    <tr>
+        <td>{{.Category}}</td>
+        <td>{{.Rating}}</td>
+    </tr>
+    {{end}}
+    {{end}}
+    </tbody>
+</table>
+
+<h1>Рейтинг по отношению к общему количеству задач:</h1>
+<table>
+    <caption>Рейтинг по отношению к общему количеству задач</caption>
+    <thead>
+    <tr>
+        <th>Категория задач</th>
+        <th>Ваш рейтинг</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{range .ViewAll}}
+    {{range .RatingByTotal}}
+    <tr>
+        <td>{{.Category}}</td>
+        <td>{{.Rating}}</td>
+    </tr>
+    {{end}}
+    {{end}}
+    </tbody>
+</table>
+
+</body>
+</html>

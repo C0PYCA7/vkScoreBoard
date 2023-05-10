@@ -1,15 +1,84 @@
 package website
 
-import "log"
+import (
+	"database/sql"
+	"log"
+)
 
 var Count int
 
-func FindUser(login string, password string) {
-	query := "SELECT COUNT(*) FROM users WHERE username = ? AND password = ?"
-	err := db.QueryRow(query, login, password).Scan(&Count)
+func FindUser(login string, password string) string {
+	query := "SELECT username FROM users WHERE username = ? AND password = ?"
+	row := db.QueryRow(query, login, password)
+	var UserNameValue string
+	err := row.Scan(&UserNameValue)
+	if err != nil {
+		log.Println("Error scanning")
+		return ""
+	}
+	return UserNameValue
+}
+
+func GetRatingTotal(db *sql.DB, userName string) []TaskRating {
+	rows, err := db.Query("SELECT category_name, score FROM rating WHERE user_name = ?", userName)
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer rows.Close()
+
+	var ratings []TaskRating
+	for rows.Next() {
+		var category string
+		var rating int
+		err := rows.Scan(&category, &rating)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		r := TaskRating{
+			Category: category,
+			Rating:   rating,
+		}
+		ratings = append(ratings, r)
+	}
+	if err != nil {
+		log.Fatal(err)
+	}
+	return ratings
+}
+
+func GetRatingByEmployee(db *sql.DB, category_name string, score int) []TaskRating {
+
+	rows, err := db.Query("SELECT category_name, COUNT(*) FROM rating "+
+		"WHERE category_name = ? AND score > ? GROUP BY category_name", category_name, score)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	var ratings []TaskRating
+	for rows.Next() {
+		var category string
+		var count int
+		err := rows.Scan(&category, &count)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		r := TaskRating{
+			Category: category,
+			Rating:   count + 1,
+		}
+		ratings = append(ratings, r)
+	}
+
+	err = rows.Err()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return ratings
 }
 
 func Check() {
@@ -70,26 +139,23 @@ func Check() {
 			log.Fatal(err)
 		}
 
-		query = "INSERT INTO rating (user_id, category_id, score) " +
-			"VALUES ((SELECT id FROM users WHERE username = ? AND password = ?), " +
-			"(SELECT id FROM categories WHERE category_name = ?), ?)"
-		_, err = db.Exec(query, uname, upass, cname1, uscore1)
+		query = "INSERT INTO rating (user_name, category_name, score) " +
+			"VALUES (?,?,?)"
+		_, err = db.Exec(query, uname, cname1, uscore1)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		query = "INSERT INTO rating (user_id, category_id, score) " +
-			"VALUES ((SELECT id FROM users WHERE username = ? AND password = ?), " +
-			"(SELECT id FROM categories WHERE category_name = ?), ?)"
-		_, err = db.Exec(query, uname, upass, cname2, uscore2)
+		query = "INSERT INTO rating (user_name, category_name, score) " +
+			"VALUES (?,?,?)"
+		_, err = db.Exec(query, uname, cname2, uscore2)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		query = "INSERT INTO rating (user_id, category_id, score) " +
-			"VALUES ((SELECT id FROM users WHERE username = ? AND password = ?), " +
-			"(SELECT id FROM categories WHERE category_name = ?), ?)"
-		_, err = db.Exec(query, uname, upass, cname3, uscore3)
+		query = "INSERT INTO rating (user_name, category_name, score) " +
+			"VALUES (?,?,?)"
+		_, err = db.Exec(query, uname, cname3, uscore3)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -114,26 +180,23 @@ func Check() {
 			log.Fatal(err)
 		}
 
-		query = "INSERT INTO rating (user_id, category_id, score) " +
-			"VALUES ((SELECT id FROM users WHERE username = ? AND password = ?), " +
-			"(SELECT id FROM categories WHERE category_name = ?), ?)"
-		_, err = db.Exec(query, uname, upass, cname1, uscore1)
+		query = "INSERT INTO rating (user_name, category_name, score) " +
+			"VALUES (?,?,?)"
+		_, err = db.Exec(query, uname, cname1, uscore1)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		query = "INSERT INTO rating (user_id, category_id, score) " +
-			"VALUES ((SELECT id FROM users WHERE username = ? AND password = ?), " +
-			"(SELECT id FROM categories WHERE category_name = ?), ?)"
-		_, err = db.Exec(query, uname, upass, cname2, uscore2)
+		query = "INSERT INTO rating (user_name, category_name, score) " +
+			"VALUES (?,?,?)"
+		_, err = db.Exec(query, uname, cname2, uscore2)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		query = "INSERT INTO rating (user_id, category_id, score) " +
-			"VALUES ((SELECT id FROM users WHERE username = ? AND password = ?), " +
-			"(SELECT id FROM categories WHERE category_name = ?), ?)"
-		_, err = db.Exec(query, uname, upass, cname3, uscore3)
+		query = "INSERT INTO rating (user_name, category_name, score) " +
+			"VALUES (?,?,?)"
+		_, err = db.Exec(query, uname, cname3, uscore3)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -158,26 +221,23 @@ func Check() {
 			log.Fatal(err)
 		}
 
-		query = "INSERT INTO rating (user_id, category_id, score) " +
-			"VALUES ((SELECT id FROM users WHERE username = ? AND password = ?), " +
-			"(SELECT id FROM categories WHERE category_name = ?), ?)"
-		_, err = db.Exec(query, uname, upass, cname1, uscore1)
+		query = "INSERT INTO rating (user_name, category_name, score) " +
+			"VALUES (?,?,?)"
+		_, err = db.Exec(query, uname, cname1, uscore1)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		query = "INSERT INTO rating (user_id, category_id, score) " +
-			"VALUES ((SELECT id FROM users WHERE username = ? AND password = ?), " +
-			"(SELECT id FROM categories WHERE category_name = ?), ?)"
-		_, err = db.Exec(query, uname, upass, cname2, uscore2)
+		query = "INSERT INTO rating (user_name, category_name, score) " +
+			"VALUES (?,?,?)"
+		_, err = db.Exec(query, uname, cname2, uscore2)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		query = "INSERT INTO rating (user_id, category_id, score) " +
-			"VALUES ((SELECT id FROM users WHERE username = ? AND password = ?), " +
-			"(SELECT id FROM categories WHERE category_name = ?), ?)"
-		_, err = db.Exec(query, uname, upass, cname3, uscore3)
+		query = "INSERT INTO rating (user_name, category_name, score) " +
+			"VALUES (?,?,?)"
+		_, err = db.Exec(query, uname, cname3, uscore3)
 		if err != nil {
 			log.Fatal(err)
 		}

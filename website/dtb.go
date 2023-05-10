@@ -51,8 +51,8 @@ func StartDb() {
 
 	_, err = db.Exec("CREATE TABLE IF NOT EXISTS rating " +
 		"(id INT AUTO_INCREMENT PRIMARY KEY," +
-		"user_id INT," +
-		"category_id INT," +
+		"user_name VARCHAR(50)," +
+		"category_name VARCHAR(50)," +
 		"score INT)")
 	if err != nil {
 		log.Fatal(err)
